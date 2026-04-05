@@ -13,18 +13,53 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #001a4d 0%, #0052cc 25%, #0080ff 50%, #00ccff 75%, #00e6ff 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
+            background: #000814;
             min-height: 100vh;
             color: #333;
             overflow: hidden;
+            position: relative;
         }
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* Галактический фон */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at 30% 40%, rgba(0, 128, 255, 0.15) 0%, rgba(138, 43, 226, 0.1) 20%, transparent 60%),
+                        radial-gradient(ellipse at 70% 60%, rgba(255, 0, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(ellipse at 50% 50%, rgba(0, 200, 255, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Звезды */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, white 0%, transparent 100%),
+                radial-gradient(2px 2px at 60% 70%, #ffd700 0%, transparent 100%),
+                radial-gradient(1px 1px at 50% 50%, white 0%, transparent 100%),
+                radial-gradient(1px 1px at 80% 20%, #00ffff 0%, transparent 100%),
+                radial-gradient(2px 2px at 10% 60%, #ff00ff 0%, transparent 100%),
+                radial-gradient(1px 1px at 90% 10%, white 0%, transparent 100%);
+            background-size: 300% 300%, 400% 400%, 250% 250%, 350% 350%, 400% 400%, 300% 300%;
+            background-position: 0% 0%, 100% 100%, 50% 50%, 75% 25%, 25% 75%, 50% 50%;
+            animation: stars 120s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes stars {
+            0% { background-position: 0% 0%, 100% 100%, 50% 50%, 75% 25%, 25% 75%, 50% 50%; }
+            100% { background-position: 100% 100%, 0% 0%, 50% 50%, 75% 25%, 25% 75%, 50% 50%; }
         }
 
         .app-container {
@@ -33,56 +68,63 @@
             display: flex;
             flex-direction: column;
             position: relative;
+            z-index: 10;
         }
 
         /* Анимированные фоновые элементы */
         .background-animation {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
             overflow: hidden;
-            opacity: 0.1;
+            opacity: 0.3;
+            z-index: 2;
+            pointer-events: none;
         }
 
         .planet {
             position: absolute;
             border-radius: 50%;
             background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(255,255,255,0.2));
+            box-shadow: 0 0 50px rgba(0, 200, 255, 0.5);
         }
 
         .planet1 {
-            width: 100px;
-            height: 100px;
-            background: radial-gradient(circle at 30% 30%, #87CEEB, #4A90E2);
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle at 30% 30%, #00ccff, #0080ff);
             top: 10%;
             right: 5%;
-            animation: float 6s ease-in-out infinite;
+            animation: float 15s ease-in-out infinite;
+            box-shadow: 0 0 100px rgba(0, 200, 255, 0.6), 0 0 150px rgba(0, 100, 255, 0.3);
         }
 
         .planet2 {
-            width: 60px;
-            height: 60px;
-            background: radial-gradient(circle at 30% 30%, #FFB347, #FF8C00);
-            bottom: 15%;
-            left: 5%;
-            animation: float 8s ease-in-out infinite;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle at 30% 30%, #ff00ff, #8b008b);
+            bottom: 20%;
+            left: 10%;
+            animation: float 20s ease-in-out infinite;
+            box-shadow: 0 0 80px rgba(255, 0, 255, 0.6);
         }
 
         .planet3 {
-            width: 80px;
-            height: 80px;
-            background: radial-gradient(circle at 30% 30%, #DC143C, #8B0000);
-            top: 40%;
-            right: 10%;
-            animation: float 7s ease-in-out infinite;
-            opacity: 0.08;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle at 30% 30%, #ffff00, #ff8800);
+            top: 30%;
+            right: 20%;
+            animation: float 18s ease-in-out infinite;
+            opacity: 0.4;
+            box-shadow: 0 0 90px rgba(255, 200, 0, 0.4);
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-30px) scale(1.1); }
         }
 
         /* Header */
