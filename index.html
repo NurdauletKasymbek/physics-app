@@ -13,10 +13,18 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0052cc 0%, #0080ff 50%, #00ccff 100%);
+            background: linear-gradient(135deg, #001a4d 0%, #0052cc 25%, #0080ff 50%, #00ccff 75%, #00e6ff 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
             min-height: 100vh;
             color: #333;
             overflow: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .app-container {
@@ -426,6 +434,103 @@
             background: white;
             color: #0052cc;
         }
+
+        /* Модальное окно автора */
+        .author-modal {
+            display: none;
+            position: fixed;
+            z-index: 300;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .author-modal.active {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .author-modal-content {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            border-radius: 25px 25px 0 0;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: slideUp 0.4s ease;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .author-modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .author-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0052cc, #0080ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            margin: 0 auto 15px;
+            box-shadow: 0 5px 20px rgba(0, 80, 204, 0.3);
+        }
+
+        .author-modal-header h2 {
+            color: #0052cc;
+            font-size: 22px;
+            margin: 10px 0 5px;
+        }
+
+        .author-modal-header p {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .author-info {
+            background: #f0f5ff;
+            border-left: 4px solid #0080ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .author-info strong {
+            color: #0052cc;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .close-author-modal {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-author-modal:hover {
+            color: #0052cc;
+        }
     </style>
 </head>
 <body>
@@ -644,25 +749,25 @@
             </div>
         </div>
 
-        <!-- Автор -->
+        /* Автор */
         <div id="author" class="section">
             <button class="back-btn" onclick="showSection('home')">← Қайта</button>
-            <h2 class="section-title">👨‍💻 Автор Туралы</h2>
+            <h2 class="section-title">👨‍💻 Авторлық Құқық</h2>
             
             <div class="card">
                 <h3>Физика - Оқу Құралы</h3>
                 <p><strong>Версиясы:</strong> 1.0</p>
-                <p><strong>Техникалық орындаушы:</strong> Ержан Сағындық</p>
+                <p><strong>Платформа:</strong> Telegram Mini App</p>
                 <p><strong>Жыл:</strong> 2026</p>
             </div>
+
+            <button class="function-btn" style="width: 100%; margin-top: 20px;" onclick="showAuthorModal()">
+                👨‍🏫 Мұғалім туралы ақпарат
+            </button>
+
             <div class="card">
-                <h3>Мақсаты</h3>
-                <p>Бұл іс-әрекет оқушыларға физика пәнін оңай және қызықты түрде меңгертуге қызмет етеді. Интерактивті тестілеу, сәйкестендіру және анықтамалар арқылы білім беру.</p>
-            </div>
-            <div class="card">
-                <h3>Байланыс</h3>
-                <p>📧 Email: info@physics-app.kz</p>
-                <p>📱 Telegram: @physics_app_kz</p>
+                <h3>Мұғалім</h3>
+                <p>Бұл қосымша физика пәнінің мұғалімі тарамнан құрастырылған және оқушыларға білім беру үшін құрылған.</p>
             </div>
         </div>
     </div>
@@ -676,6 +781,43 @@
             <button class="close-modal" onclick="closeModal()">✕</button>
         </div>
         <div id="modalBody" class="modal-text"></div>
+    </div>
+</div>
+
+<!-- Модальное окно автора -->
+<div id="authorModal" class="author-modal">
+    <div class="author-modal-content">
+        <button class="close-author-modal" onclick="closeAuthorModal()">✕</button>
+        <div class="author-modal-header">
+            <div class="author-avatar">👨‍🏫</div>
+            <h2>Физика Мұғалімі</h2>
+            <p>Оқу бағдарламасын құрастырушы</p>
+        </div>
+
+        <div class="author-info">
+            <strong>Аты-жөні:</strong>
+            Физика пәнінің құлықты мұғалімі
+        </div>
+
+        <div class="author-info">
+            <strong>Кәсіби бағыты:</strong>
+            Орта білім беретін мектептерде физика пәнін оқыту
+        </div>
+
+        <div class="author-info">
+            <strong>Мақсаты:</strong>
+            Оқушыларға физика пәнін интерактивті және қызықты түрде үйрету
+        </div>
+
+        <div class="author-info">
+            <strong>Қосымшаның мақсаты:</strong>
+            Тест тапсырмалары, сәйкестендіру және анықтамалар арқылы оқушылардың білімін тексеру және арттыру
+        </div>
+
+        <div class="author-info">
+            <strong>Авторлық құқық © 2026</strong>
+            Барлық құқықтар сақталған. Осы қосымшаны коммерциялық мақсатта пайдалану ұрылықты.
+        </div>
     </div>
 </div>
 
@@ -750,6 +892,14 @@
         document.getElementById('contentModal').classList.remove('active');
     }
 
+    function showAuthorModal() {
+        document.getElementById('authorModal').classList.add('active');
+    }
+
+    function closeAuthorModal() {
+        document.getElementById('authorModal').classList.remove('active');
+    }
+
     // Закрыть меню при клике на пункт
     document.querySelectorAll('.menu-item').forEach(item => {
         item.addEventListener('click', () => {
@@ -761,6 +911,13 @@
     document.getElementById('contentModal').addEventListener('click', (e) => {
         if (e.target === document.getElementById('contentModal')) {
             closeModal();
+        }
+    });
+
+    // Закрыть модальное окно автора при клике вне его
+    document.getElementById('authorModal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('authorModal')) {
+            closeAuthorModal();
         }
     });
 </script>
