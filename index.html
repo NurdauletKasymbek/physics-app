@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Физика - Оқу Құралы</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0052cc 0%, #0080ff 50%, #00ccff 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Анимированные фоновые элементы */
+        .background-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            opacity: 0.1;
+        }
+
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(255,255,255,0.2));
+        }
+
+        .planet1 {
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle at 30% 30%, #87CEEB, #4A90E2);
+            top: 10%;
+            right: 5%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .planet2 {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle at 30% 30%, #FFB347, #FF8C00);
+            bottom: 15%;
+            left: 5%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .planet3 {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 30% 30%, #DC143C, #8B0000);
+            top: 40%;
+            right: 10%;
+            animation: float 7s ease-in-out infinite;
+            opacity: 0.08;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(90deg, #0052cc 0%, #0080ff 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 50, 150, 0.3);
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+
+        /* Боковое меню */
+        .sidebar {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(180deg, #0052cc 0%, #003d99 100%);
+            color: white;
+            transition: left 0.3s ease;
+            z-index: 200;
+            overflow-y: auto;
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-menu {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .menu-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            padding-left: 30px;
+        }
+
+        .menu-item:active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .menu-item-icon {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        /* Overlay для меню */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 150;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Основной контент */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Секции контента */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Главная страница */
+        .welcome-section {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+        }
+
+        .logo {
+            font-size: 80px;
+            margin: 20px 0;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .welcome-section h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .welcome-section p {
+            font-size: 14px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        /* Кнопки классов */
+        .class-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .class-btn {
+            background: linear-gradient(135deg, #00ccff 0%, #0080ff 100%);
+            color: white;
+            border: none;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 128, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .class-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 128, 255, 0.5);
+            background: linear-gradient(135deg, #00e6ff 0%, #0099ff 100%);
+        }
+
+        .class-btn:active {
+            transform: translateY(-2px);
+        }
+
+        /* Кнопки функций внутри класса */
+        .function-buttons {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .function-btn {
+            background: linear-gradient(90deg, #0080ff 0%, #0052cc 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 50, 150, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .function-btn:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 15px rgba(0, 50, 150, 0.4);
+        }
+
+        /* Кнопки уровней (a, b, c) */
+        .level-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .level-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .level-btn:hover {
+            background: white;
+            color: #0052cc;
+            transform: scale(1.05);
+        }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 300;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .modal-content {
+            background: white;
+            width: 100%;
+            padding: 20px;
+            border-radius: 20px 20px 0 0;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #0080ff;
+        }
+
+        .modal-header h2 {
+            color: #0052cc;
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .modal-text {
+            color: #333;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .section-title {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #0080ff;
+        }
+
+        .card h3 {
+            color: #0052cc;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .card p {
+            color: #555;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            border: 2px solid white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: #0052cc;
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <!-- Анимированный фон -->
+    <div class="background-animation">
+        <div class="planet planet1"></div>
+        <div class="planet planet2"></div>
+        <div class="planet planet3"></div>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>⚛️ Физика</h1>
+        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    </div>
+
+    <!-- Боковое меню -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Меню</h2>
+            <button class="close-menu" onclick="toggleMenu()">✕</button>
+        </div>
+        <div class="menu-item" onclick="showSection('formulas')">
+            <span class="menu-item-icon">📐</span>Формулалар
+        </div>
+        <div class="menu-item" onclick="showSection('units')">
+            <span class="menu-item-icon">📏</span>Өлшем бірліктер
+        </div>
+        <div class="menu-item" onclick="showSection('definitions')">
+            <span class="menu-item-icon">📖</span>Анықтамалар жинағы
+        </div>
+        <div class="menu-item" onclick="showSection('quantities')">
+            <span class="menu-item-icon">🔤</span>Физикалық шамалар
+        </div>
+        <div class="menu-item" onclick="showSection('constants')">
+            <span class="menu-item-icon">⚡</span>Тұрақты шамалар
+        </div>
+        <div class="menu-item" onclick="showSection('literature')">
+            <span class="menu-item-icon">📚</span>Пайдаланылған әдебиеттер
+        </div>
+        <div class="menu-item" onclick="showSection('author')">
+            <span class="menu-item-icon">👨‍💻</span>Автор туралы
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <!-- Основной контент -->
+    <div class="main-content">
+        <!-- Главная секция -->
+        <div id="home" class="section active">
+            <div class="welcome-section">
+                <div class="logo">⚛️</div>
+                <h2>Физика - Оқу Құралы</h2>
+                <p>Классо бойынша тестілеу және練習</p>
+
+                <div class="class-buttons">
+                    <button class="class-btn" onclick="showClassContent(7)">7-сынып</button>
+                    <button class="class-btn" onclick="showClassContent(8)">8-сынып</button>
+                    <button class="class-btn" onclick="showClassContent(9)">9-сынып</button>
+                    <button class="class-btn" onclick="showClassContent(10)">10-сынып</button>
+                    <button class="class-btn" onclick="showClassContent(11)">11-сынып</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Секция класса -->
+        <div id="class-content" class="section">
+            <button class="back-btn" onclick="showSection('home')">← Қайта</button>
+            <h2 class="section-title" id="class-title">7-сынып</h2>
+
+            <div class="function-buttons">
+                <button class="function-btn" onclick="showTestSelector(1)">📝 Тест тапсырмалары</button>
+                <button class="function-btn" onclick="showTestSelector(2)">🔗 Сәйкестендіру</button>
+                <button class="function-btn" onclick="showTestSelector(3)">📚 Анықтамалар жинағы</button>
+            </div>
+        </div>
+
+        <!-- Секция уровней -->
+        <div id="level-selector" class="section">
+            <button class="back-btn" onclick="showSection('class-content')">← Қайта</button>
+            <h2 class="section-title" id="level-title">Деңгей таңдау</h2>
+
+            <div class="level-buttons">
+                <button class="level-btn" onclick="showContent('A')">Деңгей A<br>(Қиын емес)</button>
+                <button class="level-btn" onclick="showContent('B')">Деңгей B<br>(Орта)</button>
+                <button class="level-btn" onclick="showContent('C')">Деңгей C<br>(Қиын)</button>
+            </div>
+        </div>
+
+        <!-- Формулалар -->
+        <div id="formulas" class="section">
+            <button class="back-btn" onclick="showSection('home')">← Қайта</button>
+            <h2 class="section-title">📐 Физикалық Формулалар</h2>
+            
+            <div class="card">
+                <h3>Жылдамдық</h3>
+                <p><strong>v = s/t</strong> - қашықтық / уақыт</p>
+            </div>
+            <div class="card">
+                <h3>Күш</h3>
+                <p><strong>F = m·a</strong> - масса × үдеу</p>
+            </div>
+            <div class="card">
+                <h3>Энергия</h3>
+                <p><strong>E = m·c²</strong> - масса × жылдамдық квадраты</p>
+            </div>
+            <div class="card">
+                <h3>Ток</h3>
+                <p><strong>I = Q/t</strong> - заряд / уақыт</p>
+            </div>
+        </div>
+
+        <!-- Өлшем бірліктер -->
+        <div id="units" class="section">
+            <button class="back-btn" onclick="showSection('home')">← Қайта</button>
+            <h2 class="section-title">📏 Өлшем Бірліктер</h2>
+            
+            <div class="card">
+                <h3>Механика</h3>
+                <p>Жылдамдық: <strong>м/с (метр/секунд)</strong></p>
+                <p>Күш: <strong>Н (Ньютон)</strong></p>
+                <p>Энергия: <strong>Дж (Джоуль)</strong></p>
+            </div>
+            <div class="card">
+                <h3>Электр</h3>
+                <p>Ток: <strong>А (Ампер)</strong></p>
+                <p>Кернеу: <strong>В (Вольт)</strong></p>
+                <p>Төлтек: <strong>Кл (Кулон)</strong></p>
+            </div>
+        </div>
+
+        <!-- Анықтамалар -->
+        <div id="definitions" class="section">
+            <button class="back-btn" onclick="showSection('home')">← Қайта</button>
+            <h2 class="section-title">📖 Анықтамалар Жинағы</h2>
+            
+            <div class="card">
+                <h3>Жылдамдық</h3>
+                <p>Заттың уақыт пен өзгеретін орындағы өзгерісінің сипаттамасы.</p>
+            </div>
+            <div class="card">
+                <h3>Ынамдық</h3>
+                <p>Заттың қарулық орнын өзгертуге қарсы екінші тәсіліктігінің өлшемі.</p>
+            </div>
+            <div class="card">
+                <h3>Энергия</h3>
+                <p>Жұмыс істеу мүмкіндігінің өлшемсі. Барлық өзгерістердің түб-төркіні.</p>
+            </div>
+        </div>
+
+        <!-- Физикалық шамалар -->
+        <div id="quantities" class="section">
+            <button class="back-btn" onclick="showSection('home')">← Қайта</button>
+            <h2 class="section-title">🔤 Физикалық Шамалардың Белгіленуі</h2>
+            
+            <div class="card">
+                <h3>Механикада</h3>
+                <p><strong>v</strong> - жылдамдық</p>
+                <p><strong>s</strong> - қашықтық</p>
+                <p><strong>t</strong> - уақыт</p>
+                <p><strong>a</strong> - үдеу</p>
+                <p><strong>F</strong> - күш</p>
+                <p><strong>m</strong> - масса</p>
+            </div>
+            <div class="card">
+                <h3>Электрілік</h3>
+                <p><strong>I</strong> - ток күші</p>
+                <p><strong>U</strong> - кернеу</p>
+                <p><strong>R</strong> - кедергі</p>
+                <p><strong>q</strong> - өлшем</p>
+            </div>
+        </div>
+
+        <!-- Тұрақты шамалар -->
+        <div id="constants" class="section">
+            <button class="back-btn" onclick="showSection('home')">← Қайта</button>
+            <h2 class="section-title">⚡ Физикалық Тұрақты Шамалар</h2>
+            
+            <div class="card">
+                <h3>Ньютонның инертттік тұрақтысы</h3>
+                <p><strong>G = 6.674 × 10⁻¹¹</strong> Н·м²/кг²</p>
+            </div>
+            <div class="card">
+                <h3>Ауырлық үдеуі</h3>
+                <p><strong>g = 9.81</strong> м/с²</p>
+            </div>
+            <div class="card">
+                <h3>Электрондың массасы</h3>
+                <p><strong>mₑ = 9.109 × 10⁻³¹</strong> кг</p>
+            </div>
+            <div class="card">
+                <h3>Плутон тұрақтысы</h3>
+                <p><strong>h = 6.626 × 10⁻³⁴</strong> Дж·с</p>
+            </div>
+        </div>
+
+        <!-- Әдебиеттер -->
+        <div id="literature" class="section">
+            <button class="back-btn" onclick="showSection('home')">← Қайта</button>
+            <h2 class="section-title">📚 Пайдаланылған Әдебиеттер</h2>
+            
+            <div class="card">
+                <h3>1. Физика оқулығы</h3>
+                <p>Әзімов Б.А. - Орта орта мектептер үшін оқулық</p>
+            </div>
+            <div class="card">
+                <h3>2. Физика бойынша есептер</h3>
+                <p>Тілеутай А.К. - Проблемалық сыйлықтар жинағы</p>
+            </div>
+            <div class="card">
+                <h3>3. Демонстрациялық физика</h3>
+                <p>Мәмберов Е.И. - Экспериментальді физика</p>
+            </div>
+        </div>
+
+        <!-- Автор -->
+        <div id="author" class="section">
+            <button class="back-btn" onclick="showSection('home')">← Қайта</button>
+            <h2 class="section-title">👨‍💻 Автор Туралы</h2>
+            
+            <div class="card">
+                <h3>Физика - Оқу Құралы</h3>
+                <p><strong>Версиясы:</strong> 1.0</p>
+                <p><strong>Техникалық орындаушы:</strong> Ержан Сағындық</p>
+                <p><strong>Жыл:</strong> 2026</p>
+            </div>
+            <div class="card">
+                <h3>Мақсаты</h3>
+                <p>Бұл іс-әрекет оқушыларға физика пәнін оңай және қызықты түрде меңгертуге қызмет етеді. Интерактивті тестілеу, сәйкестендіру және анықтамалар арқылы білім беру.</p>
+            </div>
+            <div class="card">
+                <h3>Байланыс</h3>
+                <p>📧 Email: info@physics-app.kz</p>
+                <p>📱 Telegram: @physics_app_kz</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно -->
+<div id="contentModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Контент</h2>
+            <button class="close-modal" onclick="closeModal()">✕</button>
+        </div>
+        <div id="modalBody" class="modal-text"></div>
+    </div>
+</div>
+
+<!-- Telegram Web App SDK -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<script>
+    let tg = window.Telegram?.WebApp;
+    if (tg) {
+        tg.expand();
+    }
+
+    let currentClass = 7;
+    let currentFunction = 0;
+
+    function toggleMenu() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+    }
+
+    function showSection(sectionId) {
+        // Скрыть все секции
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.remove('active');
+        });
+        // Показать нужную секцию
+        document.getElementById(sectionId).classList.add('active');
+        toggleMenu();
+    }
+
+    function showClassContent(classNum) {
+        currentClass = classNum;
+        document.getElementById('class-title').textContent = classNum + '-сынып';
+        showSection('class-content');
+    }
+
+    function showTestSelector(funcNum) {
+        currentFunction = funcNum;
+        let titles = ['Тест тапсырмалары', 'Сәйкестендіру', 'Анықтамалар жинағы'];
+        document.getElementById('level-title').textContent = titles[funcNum - 1];
+        showSection('level-selector');
+    }
+
+    function showContent(level) {
+        const titles = ['📝 Тест тапсырмалары', '🔗 Сәйкестендіру', '📚 Анықтамалар жинағы'];
+        const contents = {
+            'A': {
+                0: 'Деңгей A - Қиын емес тестілер (7-сынып)',
+                1: 'Деңгей A - Ортаға сәйкестендіру (7-сынып)',
+                2: 'Деңгей A - Анықтамалар (7-сынып)'
+            },
+            'B': {
+                0: 'Деңгей B - Орта деңгейдегі тестілер (7-сынып)',
+                1: 'Деңгей B - Түрлөндірілген сәйкестендіру (7-сынып)',
+                2: 'Деңгей B - Кеңейтілген анықтамалар (7-сынып)'
+            },
+            'C': {
+                0: 'Деңгей C - Қиын тестілер (7-сынып)',
+                1: 'Деңгей C - Қыршықталған сәйкестендіру (7-сынып)',
+                2: 'Деңгей C - Талдаулық анықтамалар (7-сынып)'
+            }
+        };
+
+        document.getElementById('modalTitle').textContent = titles[currentFunction - 1] + ' - Деңгей ' + level;
+        document.getElementById('modalBody').innerHTML = contents[level][currentFunction - 1] || 'Контент жүктелмеді';
+        document.getElementById('contentModal').classList.add('active');
+    }
+
+    function closeModal() {
+        document.getElementById('contentModal').classList.remove('active');
+    }
+
+    // Закрыть меню при клике на пункт
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('click', () => {
+            setTimeout(toggleMenu, 100);
+        });
+    });
+
+    // Закрыть модальное окно при клике вне его
+    document.getElementById('contentModal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('contentModal')) {
+            closeModal();
+        }
+    });
+</script>
+</body>
+</html>
